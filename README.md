@@ -109,26 +109,6 @@ systems (Prometheus, Gorilla, LSM-trees generally) solve this the same
 way — a hot uncompressed buffer for live writes, a background compactor
 for cold storage.
 
-## How to talk about this in an interview
-
-Lead with the constraint, not the code:
-
-> "Standard write() calls cross the user/kernel boundary and copy data on
-> every call. I built a FUSE filesystem where the actual write path uses
-> mmap, so the application writes straight into kernel page-cache memory
-> — measured 362x faster wall-clock time than write() for the same
-> million-sample workload, mostly because we're not blocking on a syscall
-> round-trip through /dev/fuse. On the buffering side, a mutex-based
-> producer-consumer ring buffer sustained ~588K packets/sec from 8
-> concurrent threads with zero data loss, verified with a checksum test.
-> I also implemented XOR-delta compression similar to Facebook's Gorilla
-> — got a modest 1.14x ratio with byte-level truncation, and I know
-> exactly why: a full bit-packed version would do meaningfully better,
-> which I'd tackle next."
-
-That last sentence — naming the limitation and the fix — is doing real
-work. It signals you understand the algorithm rather than having copied
-a number.
 
 ## Repo layout
 - `tsfs.cpp` — the FUSE driver (Steps 1–3)
